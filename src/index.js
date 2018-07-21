@@ -10,7 +10,7 @@ class App extends React.Component {
         }
     }
 
-    componentDidMount(){
+    setTimeChange(){
     //设置定时器，每秒更新一次剩余时间
         this.timerId = setInterval(()=>{
             //如果剩余时间等于0，结束定时器
@@ -52,6 +52,9 @@ class App extends React.Component {
         )
     }
     handleClick=()=>{
+        if (this.state.count===1){
+            this.setTimeChange()
+        }
 
         //判断是否到达时间了，如果是则跳出函数
         if (this.isTimeUp()){
