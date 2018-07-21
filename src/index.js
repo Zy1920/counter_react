@@ -11,11 +11,23 @@ class App extends React.Component {
     }
 
     componentDidMount(){
+    //设置定时器，每秒更新一次剩余时间
+        this.timerId = setInterval(()=>{
+            //如果剩余时间等于0，结束定时器
+            if(this.isTimeUp()){
+                clearInterval(this.timerId)
+                return
+            }
+            //更新state状态中的剩余时间
+            this.setState({
+                timeLeft: this.state.timeLeft - 1
+            })
+        }, 1000)
 
     }
 
     isTimeUp(){
-       return this.state.timeLeft===0
+        return this.state.timeLeft===0
     }
 
     render(){
@@ -40,18 +52,6 @@ class App extends React.Component {
         )
     }
     handleClick=()=>{
-        //设置定时器，每秒更新一次剩余时间
-        this.timerId = setInterval(()=>{
-            //如果剩余时间等于0，结束定时器
-            if(this.isTimeUp()){
-                clearInterval(this.timerId)
-                return
-            }
-            //更新state状态中的剩余时间
-            this.setState({
-                timeLeft: this.state.timeLeft - 1
-            })
-        }, 1000)
 
         //判断是否到达时间了，如果是则跳出函数
         if (this.isTimeUp()){
@@ -70,4 +70,3 @@ ReactDom.render(
     <App/>,
     document.getElementById("root")
 )
-
