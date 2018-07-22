@@ -13,7 +13,7 @@ class App extends React.Component{
 
     toRMB=(money)=>money*6.7;
     toUSD=(money)=>money/6.7;
-    convert=(money)=>money*1000/1000;
+    convert=(money)=>Math.round(money*1000)/1000;
     render(){
         const money=this.state.money
         const unit=this.state.unit
