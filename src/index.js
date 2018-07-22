@@ -1,73 +1,74 @@
 import React from "react"
 import ReactDom from "react-dom"
 
-class App extends React.Component {
-    constructor(props){
+
+class App extends React.Component{
+    constructor(props) {
         super(props);
-        this.state={
-            count:0,
-            timeLeft:10
+        this.state = {
+            unit:"rmb",
+            money:0
         }
     }
 
-    setTimeChange(){
-    //设置定时器，每秒更新一次剩余时间
-        this.timerId = setInterval(()=>{
-            //如果剩余时间等于0，结束定时器
-            if(this.isTimeUp()){
-                clearInterval(this.timerId)
-                return
-            }
-            //更新state状态中的剩余时间
-            this.setState({
-                timeLeft: this.state.timeLeft - 1
-            })
-        }, 1000)
-
-    }
-
-    isTimeUp(){
-        return this.state.timeLeft===0
-    }
-
+    toRMB=(money)=>money*6.7;
+    toUSD=(money)=>money/6.7;
+    convert=(money)=>money*1000/1000;
     render(){
-        // 定义样式
-        const btnStyle = {
-            width: 200, height: 200,
-            backgroundColor: (this.state.count % 2 === 0) ? 'pink':'gray',
-            fontSize: 22
-        };
-        let tip=null;
-        if (this.isTimeUp()){
-            tip=<h3>游戏结束，总共点了{this.state.count}次按钮</h3>
-        } else {
-            tip=<h3>加油，游戏还剩下{this.state.timeLeft}秒钟</h3>
-        }
+        const money=this.state.money
+        const unit=this.state.unit
+
+        const rmb=unit==="rmb"?money:this.convert(this.toRMB(money))
+        const usd=unit==="usd"?money:this.convert(this.toUSD(money))
+
         return(
             <div>
-                <h3>计数器游戏，测测你的手速哦</h3>
-                {tip}
-                <button style={btnStyle} onClick={this.handleClick}>{this.state.count}</button>
+                <h2>付款计算器</h2>
+                <MoneyInput unit="rmb" money={rmb} onMoneyInput={(money)=>{this.setState({money:money,unit:"rmb"})}}/>
+                <MoneyInput unit="usd" money={usd} onMoneyInput={(money)=>{this.setState({money:money,unit:"usd"})}} />
+                <BuySomething money={this.state.money}/>
             </div>
         )
     }
-    handleClick=()=>{
-        if (this.state.count===1){
-            this.setTimeChange()
-        }
+}
 
-        //判断是否到达时间了，如果是则跳出函数
-        if (this.isTimeUp()){
-            return
-        }
-        //每次点击后对state中的count属性做自增操作
-        this.setState({
-            count:this.state.count+1
-        })
+const unitName={
+    rmb:"人民币",
+    usd:"美元"
+}
+
+class MoneyInput extends React.Component {
+    render(){
+        return(
+            <div>
+                <fieldset>
+                    <legend>请输入付款金额({unitName[this.props.unit]})</legend>
+                    <input type="text" value={this.props.money} onChange={this.handleInputChange}/>
+                </fieldset>
+            </div>
+        )
     }
 
-
+    handleInputChange=(e)=>{
+        console.log("输入内容了："+e.target.value);
+        let money=e.target.value;
+        money=money.substring(0,6).replace(/[^.\d]+/, '')
+        this.props.onMoneyInput(money)
+    }
 }
+
+function BuySomething(props){
+    console.log(props.money)
+    let money = parseFloat(props.money);
+     if (Number.isNaN(money)){
+         return <h4>侬说啥，给钱吧</h4>
+     }
+     if (money>=10){
+         return <h4>购买成功，付款{money}元，找零{money-10}元</h4>
+     }
+     return <h4>购买失败，付款{money}元</h4>
+}
+
 
 ReactDom.render(
     <App/>,
